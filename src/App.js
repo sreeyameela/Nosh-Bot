@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import ChatBot from 'react-simple-chatbot';
 import { ThemeProvider } from 'styled-components';
@@ -14,13 +14,15 @@ const theme = {
   botFontColor: 'black',
   userBubbleColor: '#ed872d',
   userFontColor: 'white',
-  headerImage: 'none', 
+  headerImage: 'none',
 };
+
 const steps = [
   {
     id: '0',
     message: 'Hello! What is your name?',
     trigger: '1',
+    waitAction: true,
   },
   {
     id: '1',
@@ -30,11 +32,13 @@ const steps = [
       value: '{{{raw}}}'
     },
     trigger: '2',
+    waitAction: true,
   },
   {
     id: '2',
     message: 'Nice to meet you, {previousValue}! Welcome to our restaurant. What type of food would you like to order today?',
     trigger: '3',
+    waitAction: true,
   },
   {
     id: '3',
@@ -44,16 +48,19 @@ const steps = [
       { value: 'pasta', label: 'Pasta', trigger: '4' },
       { value: 'drink', label: 'Drink', trigger: '5' },
     ],
+    waitAction: true,
   },
   {
     id: '4',
     message: 'How many would you like to order?',
     trigger: 'food',
+    waitAction: true,
   },
   {
     id: '5',
     message: 'Would you like to order a drink?',
     trigger: '7',
+    waitAction: true,
   },
   {
     id: 'food',
@@ -78,6 +85,10 @@ const steps = [
       { value: 'juice', label: 'Juice', trigger: '6' },
       { value: 'No', label: 'No', trigger: '8' },
     ],
+    shouldTriggerNext: (value, previousValue) => {
+      return value !== previousValue;
+    },
+    waitAction: true,
   },
 
   {
@@ -112,70 +123,65 @@ const steps = [
     end: true,
   },
 ];
+
 const config = {
   floating: true,
 };
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      conversationHistory: [],
-    };
+const App = () => {
+  const [conversationHistory, setConversationHistory] = useState([]);
+
+  const handleEnd = ({ steps, values }) => {
+    if (!conversationHistory.length) {
+      const newConversationHistory = [
+        {
+          type: 'user',
+          message: values.name,
+        },
+      ];
+      steps.forEach((step) => {
+        if (step.message) {
+          newConversationHistory.push({
+            type: 'bot',
+            message: step.message,
+          });
+        }
+      });
+      setConversationHistory(newConversationHistory);
+    }
   }
 
-  handleEnd = ({ steps, values }) => {
-    const conversationHistory = [...this.state.conversationHistory];
-    conversationHistory.push({
-      type: 'user',
-      message: values.name,
-    });
-    steps.forEach((step) => {
-      if (step.message) {
-        conversationHistory.push({
-          type: 'bot',
-          message: step.message,
-        });
-      }
-    });
-    this.setState({ conversationHistory });
-  }
-
-  render() {
-    const { conversationHistory } = this.state;
-    return (
-      <div className="App">
-        <ThemeProvider theme={theme}>
-          <ChatBot
-            headerTitle="Nosh-Bot"
-            
-            steps={steps}
-            {...config}
-            botAvatar={botAvatar}
-            headerAvatar={botAvatar}
-            handleEnd={this.handleEnd}
-          />
-          <div className="conversation-container">
-            {conversationHistory.map((message, index) => {
-              if (message.type === 'user') {
-                return (
-                  <div key={index} className="user-message">
-                    <span>{message.message}</span>
-                  </div>
-                );
-              } else {
-                return (
-                  <div key={index} className="bot-message">
-                    <span>{message.message}</span>
-                  </div>
-                );
-              }
-            })}
-          </div>
-        </ThemeProvider>
-      </div>
-    );
-  }
+  return (
+    <div className="App">
+      <ThemeProvider theme={theme}>
+        <ChatBot
+          headerTitle="Nosh-Bot"
+          steps={steps}
+          {...config}
+          botAvatar={botAvatar}
+          headerAvatar={botAvatar}
+          handleEnd={handleEnd}
+        />
+        <div className="conversation-container">
+          {conversationHistory.map((message, index) => {
+            if (message.type === 'user') {
+              return (
+                <div key={index} className="user-message">
+                  <span>{message.message}</span>
+                </div>
+              );
+            } else {
+              return (
+                <div key={index} className="bot-message">
+                  <span>{message.message}</span>
+                </div>
+              );
+            }
+          })}
+        </div>
+      </ThemeProvider>
+    </div>
+  );
 }
 
 export default App;
