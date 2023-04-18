@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import ChatBot from 'react-simple-chatbot';
 import { ThemeProvider } from 'styled-components';
-import headerAvatar from './pic/nosh.png'
-import botAvatar from './pic/nosh.png';
+import botAvatar from './pics/nosh.png';
 
 const theme = {
   background: 'white',
