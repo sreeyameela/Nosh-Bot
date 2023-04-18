@@ -19,107 +19,89 @@ const theme = {
 const steps = [
   {
     id: '0',
-    message: 'Hello! What is your name?',
+    message: 'Welcome Order & Enjoy the food in NOSH',
     trigger: '1',
     waitAction: true,
   },
   {
     id: '1',
+    message: 'Is this your first order',
+    trigger: '2',
+    waitAction: true,
+  },
+    {
+    id: '2',
+    options: [
+      { value: 'Yes', label: 'Yes', trigger: '3' },
+      { value: 'No', label: 'No', trigger: '4' },
+    ],
+    waitAction: true,
+  },
+  {
+    id: '3',
+    message: 'thankyou',
+    end:true,
+  },
+
+   {
+    id: '4',
+    message: 'May I know your name?',
+    trigger: '5',
+    waitAction: true,
+  },
+  {
+    id: '5',
     user: true,
     metadata: {
       name: 'name',
       value: '{{{raw}}}'
     },
-    trigger: '2',
+    trigger: '6',
     waitAction: true,
   },
   {
-    id: '2',
-    message: 'Nice to meet you, {previousValue}! Welcome to our restaurant. What type of food would you like to order today?',
-    trigger: '3',
-    waitAction: true,
-  },
-  {
-    id: '3',
-    options: [
-      { value: 'burger', label: 'Burger', trigger: '4' },
-      { value: 'pizza', label: 'Pizza', trigger: '4' },
-      { value: 'pasta', label: 'Pasta', trigger: '4' },
-      { value: 'drink', label: 'Drink', trigger: '5' },
-    ],
-    waitAction: true,
-  },
-  {
-    id: '4',
-    message: 'How many would you like to order?',
-    trigger: 'food',
-    waitAction: true,
-  },
-  {
-    id: '5',
-    message: 'Would you like to order a drink?',
+    id: '6',
+    message: 'Would you like to order your previous-order?',
     trigger: '7',
     waitAction: true,
   },
   {
-    id: 'food',
-    user: true,
-   
-    validator: (value) => {
-      if (isNaN(value)) {
-        return 'Please enter quantity';
-      } else if (value < 1) {
-        return 'Please enter a valid quantity';
-      } else {
-        return true;
-      }
-    },
-    trigger: '5',
-  },
-  {
     id: '7',
     options: [
-      { value: 'water', label: 'Water', trigger: '6' },
-      { value: 'soda', label: 'Soda', trigger: '6' },
-      { value: 'juice', label: 'Juice', trigger: '6' },
-      { value: 'No', label: 'No', trigger: '8' },
+      { value: 'Yes', label: 'Yes', trigger: '8' },
+      { value: 'No', label: 'No', trigger: '9' },
     ],
-    shouldTriggerNext: (value, previousValue) => {
-      return value !== previousValue;
-    },
     waitAction: true,
-  },
-
-  {
-    id: '6',
-    user: true,
-    validator: (value) => {
-      if (isNaN(value)) {
-        return 'Please enter quantity';
-      } else if (value < 1) {
-        return 'Please enter a valid quantity';
-      } else {
-        return true;
-      }
-    },
-    trigger: '8',
-  },
-  {
-    id: '8',
-    message: 'Great! Your order has been placed. Would you like to order anything else?',
-    trigger: '9',
   },
   {
     id: '9',
-    options: [
-      { value: 'yes', label: 'Yes', trigger: '3' },
-      { value: 'no', label: 'No', trigger: '10' },
-    ],
+    message: 'thankyou',
+    end:true,
+  },
+  {
+    id: '8',
+    message: 'Are you sure? Do you want to order your previous-order?',
+    trigger: '10',
+    waitAction: true,
   },
   {
     id: '10',
-    message: 'Thank you for your order, {previousValue}! We will prepare it right away.',
-    end: true,
+    options: [
+      { value: 'Yes', label: 'Yes', trigger: '11' },
+      { value: 'No', label: 'No', trigger: '12' },
+    ],
+    waitAction: true,
+  },
+  {
+    id: '12',
+    message: 'thankyou',
+    end:true,
+  },
+  {
+    id: '11',
+    message: 'Your previous-order is added to cart. Please proceed for the payment',
+    end:true,
+    waitAction: true,
   },
 ];
 
