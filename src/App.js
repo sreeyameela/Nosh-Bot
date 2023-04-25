@@ -15,7 +15,7 @@ const theme = {
   userFontColor: 'white',
   headerImage: 'none',
 };
-
+const emailValidator = require('email-validator');
 const steps = [
   {
     id: '0',
@@ -42,6 +42,13 @@ const steps = [
   {
     id: '13',
     user: true,
+    validator: (value) => {
+      if (emailValidator.validate(value)) {
+        return true;
+      } else {
+        return 'Please enter a valid email address.';
+      }
+    },
     metadata: {
       email: 'email',
       value: '{{{raw}}}'
@@ -159,9 +166,17 @@ const steps = [
   {
     id: '5',
     user: true,
+    
     metadata: {
       email: 'email',
       value: '{{{raw}}}'
+    },
+    validator: (value) => {
+      if (emailValidator.validate(value)) {
+        return true;
+      } else {
+        return 'Please enter a valid email address.';
+      }
     },
     trigger: '6',
   },
@@ -182,6 +197,22 @@ const steps = [
     message: 'Are you sure? Do you want to order?',
     trigger: '10',
   },
+  
+  {
+     id: '8',
+    message: 'Do you want to order more ?',
+      trigger: '10',
+    },
+
+    {
+         id: '10',
+         options: [
+          { value: 'Yes', label: 'Yes', trigger: '11' },
+         { value: 'No', label: 'No', trigger: '14' },
+        ],
+      },
+
+
   {
     id: '10',
     options: [
@@ -222,6 +253,11 @@ const App = () => {
       setConversationHistory(newConversationHistory);
     }
   }
+  const handleReset = () => {
+    setConversationHistory([]);
+    window.location.reload();
+  }
+  
 
   return (
     <div className="App">
@@ -233,6 +269,7 @@ const App = () => {
           botAvatar={botAvatar}
           headerAvatar={botAvatar}
           handleEnd={handleEnd}
+          handleReset={handleReset}
         />
         <div className="conversation-container">
           {conversationHistory.map((message, index) => {
